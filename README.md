@@ -36,5 +36,27 @@ Documentation:
 - `sudo chown quagga:quagga /etc/quagga/zebra.conf && sudo chmod 640 /etc/quagga/zebra.conf`
 
 ## Deactivate the ones not to be used:
-- `sudo unlink /etc/systemd/system/multi-user.target.wants/ospfd.service`
-- `sudo unlink /etc/systemd/system/multi-user.target.wants/zebra.service`
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/bgpd.service` 
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/isisd.service`
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/ospf6d.service`
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/pimd.service`
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/ripd.service`
+- `sudo unlink /etc/systemd/system/multi-user.target.wants/ripngd.service`
+
+# Set up Zebra:
+Edit config file
+```
+!
+hostname <hostname>
+password <choose one>
+enable password <again, choose one>
+!
+interface eth0
+!
+interface tun0
+! log to dedicated log file
+log file /var/log/quagga/quagga.log informational  
+! enable vty config mode
+line vty              
+```
+
