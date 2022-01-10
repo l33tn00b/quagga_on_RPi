@@ -12,20 +12,13 @@ Documentation:
 
 # Enable Kernel functionality required for Routing
 ## Enable IPv4 and IPv6 Unicast Forwarding: 
-- `echo "net.ipv4.conf.all.forwarding=1" | sudo tee -a /etc/sysctl.conf`
-- `echo "net.ipv4.conf.default.forwarding=1" | sudo tee -a /etc/sysctl.conf`
-- `sed 's/#net.ipv6.conf.all.forwarding=1/net.ipv6.conf.all.forwarding=1/g' /etc/sysctl.conf | sudo tee /etc/sysctl.conf`
-- `echo "net.ipv6.conf.default.forwarding=1" | sudo tee -a /etc/sysctl.conf`
-- `sudo sysctl -p`
-
-## Enable IPv4 Multicast Forwarding:
-- `echo "net.ipv4.conf.all.mc_forwarding=1" | sudo tee -a /etc/sysctl.conf`
-- `echo "net.ipv4.conf.default.mc_forwarding=1" | sudo tee -a /etc/sysctl.conf`
+- `echo "net.ipv4.forward=1" | sudo tee -a /etc/sysctl.conf`
+(- `sed 's/#net.ipv6.conf.all.forwarding=1/net.ipv6.conf.all.forwarding=1/g' /etc/sysctl.conf | sudo tee /etc/sysctl.conf`)
+(- `echo "net.ipv6.conf.default.forwarding=1" | sudo tee -a /etc/sysctl.conf`)
 - `sudo sysctl -p`
 
 # Choose Routing Daemon
 ## Create config files:
-- `sudo touch /etc/quagga/bgpd.conf`
 - `sudo touch /etc/quagga/ospfd.conf`
 - `sudo touch /etc/quagga/vtysh.conf`
 - `sudo touch /etc/quagga/zebra.conf`
@@ -43,8 +36,8 @@ Documentation:
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/ripd.service`
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/ripngd.service`
 
-# Set up Zebra:
-- Edit config file:
+# Set Up Zebra:
+- Edit config file: `sudo nano /etc/quagga/zebra.conf`
 ```
 !
 hostname <hostname>
@@ -60,4 +53,10 @@ log file /var/log/quagga/zebra.log informational
 line vty              
 ```
 - re-start zebra daemon: `sudo systemctl restart zebra`
-- check access: `telnet localhost 2601` (command prompt pops up)
+- check access: `telnet localhost 2601` (command prompt pops up (if correct password was supplied))
+
+# Set Up OSPFD
+- Edit config file: `sudo nano /etc/quagga/ospfd.conf`
+```
+```
+```
