@@ -44,7 +44,7 @@ Documentation:
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/ripngd.service`
 
 # Set up Zebra:
-Edit config file
+- Edit config file:
 ```
 !
 hostname <hostname>
@@ -55,8 +55,9 @@ interface eth0
 !
 interface tun0
 ! log to dedicated log file
-log file /var/log/quagga/quagga.log informational  
+log file /var/log/quagga/zebra.log informational  
 ! enable vty config mode
 line vty              
 ```
-
+- re-start zebra daemon: `sudo systemctl restart zebra`
+- check access: `telnet localhost 2601` (command prompt pops up)
