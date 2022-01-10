@@ -1,3 +1,6 @@
+Don't forget to adapt the cloud-based firewall at your server's hosting provider.
+
+
 # quagga_on_RPi
 Setting Up Quagga on a Raspberry Pi
 Documentation:
@@ -11,7 +14,7 @@ Documentation:
 - `sudo mkdir -p /var/log/quagga && sudo chown quagga:quagga /var/log/quagga`
 
 # Enable Kernel functionality required for Routing
-## Enable IPv4 and IPv6 Unicast Forwarding: 
+## Enable IPv4 and IPv6 Forwarding: 
 - `echo "net.ipv4.forward=1" | sudo tee -a /etc/sysctl.conf`
 (- `sed 's/#net.ipv6.conf.all.forwarding=1/net.ipv6.conf.all.forwarding=1/g' /etc/sysctl.conf | sudo tee /etc/sysctl.conf`)
 (- `echo "net.ipv6.conf.default.forwarding=1" | sudo tee -a /etc/sysctl.conf`)
