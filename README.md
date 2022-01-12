@@ -131,4 +131,6 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
 - turn up log info: `log <file name> debugging`
 - `sudo vtysh`, `configure terminal`, `debug ospf event`, take a look at the log
 
- Packet from <ip>] received on link tun0 but no ospf_interface                      2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>                       
+ Packet from <ip>] received on link tun0 but no ospf_interface                      2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>    
+ 
+ so I guess this one (in my case) is about a bad netmask.
