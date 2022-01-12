@@ -132,9 +132,10 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
 - `sudo vtysh`, `configure terminal`, `debug ospf event`, take a look at the log
 
  - got this one? 
- ```Packet from <ip>] received on link tun0 but no ospf_interface                      
- 2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>
- ```
- It is about an incorrect net mask having been set on the interface the hello packet was received. The daemon is having trouble matching the source of the packet to the interfaces defined in its (the daemon's) config. Found out the hard way: ripd will throw an error along the lines of `2022/01/12 21:32:25 RIP: Neighbor 10.8.0.1 doesn't have connected interface!`, interface mathing is done using `if_lookup_address` (see https://github.com/Quagga/quagga/blob/master/lib/if.c) in https://github.com/Quagga/quagga/blob/master/ripd/ripd.c. if_lookup_address does prefix matching. So here we go... fix the net mask and everything is fine.
+   ```
+   Packet from <ip>] received on link tun0 but no ospf_interface                      
+    2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>
+   ```
+    It is about an incorrect net mask having been set on the interface the hello packet was received. The daemon is having trouble matching the source of the packet to the interfaces defined in its (the daemon's) config. Found out the hard way: ripd will throw an error along the lines of `2022/01/12 21:32:25 RIP: Neighbor 10.8.0.1 doesn't have connected interface!`, interface mathing is done using `if_lookup_address` (see https://github.com/Quagga/quagga/blob/master/lib/if.c) in https://github.com/Quagga/quagga/blob/master/ripd/ripd.c. if_lookup_address does prefix matching. So here we go... fix the net mask and everything is fine.
  
  so I guess this one (in my case) is about a bad netmask.
