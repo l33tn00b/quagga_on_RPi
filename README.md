@@ -62,4 +62,11 @@ line vty
 - Edit config file: `sudo nano /etc/quagga/ospfd.conf`
 ```
 ```
-```
+
+# Manually with vtysh
+Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-40/Layer-3/Open-Shortest-Path-First-OSPF/
+- `sudo vtysh`
+- `configure terminal' 
+- `router ospf`
+- `ìnterface tun0`
+- `ip ospf area 0.0.0.0`
