@@ -126,5 +126,5 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
 - `redistribute static`
 
 # troubleshooting
-- check for hello packets sent/received on any interface: `sudo tcpdump -i any proto ospf`
-- check multicast group membership: `netstat -g` 
+- check for hello packets sent/received on any interface: `sudo tcpdump -i any proto ospf` (Hello packets?)
+- check multicast group membership of interfaces: `netstat -g` (must be member of ospf-all.mcast.net)
