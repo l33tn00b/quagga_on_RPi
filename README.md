@@ -84,7 +84,12 @@ router ospf
  passive-interface lo
  !the purpose of dynamic routing.
  !let others know about the networks we're attached to
+ !the ones we learned via ospf
  redistribute connected
+ !the ones we've set
+ redistribute static
+ !kernel routes
+ redistribute kernel
  !we'll be doing per-interface configuration
  !instead of per-network configuration
  interface ipsec1
@@ -92,7 +97,7 @@ router ospf
   !make it belong to the backbone
   ip ospf area 0.0.0.0
   !it is a point-to-point connection (between us and
-  !the main office location VPN server)
+  !the main office location VPN server) No broadcast network.
   ip ospf network point-to-point
  interface tun0
   ip ospf network point-to-point
