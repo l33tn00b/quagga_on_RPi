@@ -13,6 +13,8 @@ OpenVPN is used to have an encrypted tunnel from a local network to the central 
 Think of attaching a branch office to the main location. Now, we may also have multiple branch offices attached to that central main location. This will give us a classic star topology. All done using static routes (set by the OpenVPN server/client). Connectivity between the branch offices is established by going via the central node (main office).
 But what if the main office suffers a loss of connectivity? Wouldn't it be nice to have a backup connection between the branch offices? This is where we start using dynamic routing. So we establish additional OpenVPN tunnels between the branch offices. And need to use dynamic routing so we may detect a loss of connectivity to the main office and start using the backup routes. Or we may choose to route normal traffic between the branch offices directly (without having to go via the main office).
 
+There's a shitload of people out on the internet going like "ospf will not work over a tun interface of OpenVPN because of multicast. You must use a tap interface." Well, these people are wrong. Go tell 'em to f-ck off and go back to school or get another job not related to networking.
+
 # Install
 - `sudo apt-get install quagga
 - `sudo mkdir -p /var/log/quagga && sudo chown quagga:quagga /var/log/quagga`
@@ -42,6 +44,9 @@ But what if the main office suffers a loss of connectivity? Wouldn't it be nice 
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/pimd.service`
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/ripd.service`
 - `sudo unlink /etc/systemd/system/multi-user.target.wants/ripngd.service`
+
+## Deactivated one too many?
+- `sudo ln -st /etc/systemd/system/multi-user.target.wants /lib/systemd/system/ospfd.service`
 
 # Set Up Zebra:
 - Edit config file: `sudo nano /etc/quagga/zebra.conf`
@@ -136,6 +141,4 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
    Packet from <ip>] received on link tun0 but no ospf_interface                      
     2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>
    ```
-    It is about an incorrect net mask having been set on the interface the hello packet was received. The daemon is having trouble matching the source of the packet to the interfaces defined in its (the daemon's) config. Found out the hard way: ripd will throw an error along the lines of `2022/01/12 21:32:25 RIP: Neighbor 10.8.0.1 doesn't have connected interface!`, interface mathing is done using `if_lookup_address` (see https://github.com/Quagga/quagga/blob/master/lib/if.c) in https://github.com/Quagga/quagga/blob/master/ripd/ripd.c. if_lookup_address does prefix matching. So here we go... fix the net mask and everything is fine.
- 
- so I guess this one (in my case) is about a bad netmask.
+    It is about an incorrect net mask having been set on the interface the hello packet was received. The daemon is having trouble matching the source of the packet to the interfaces defined in its (the daemon's) config. Found out the hard way: ripd will throw an error along the lines of `2022/01/12 21:32:25 RIP: Neighbor 10.8.0.1 doesn't have connected interface!`, interface matching is done using `if_lookup_address` (see https://github.com/Quagga/quagga/blob/master/lib/if.c) in https://github.com/Quagga/quagga/blob/master/ripd/ripd.c. if_lookup_address does prefix matching. So here we go... fix the net mask and everything is fine. 
