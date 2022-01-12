@@ -106,8 +106,16 @@ router ospf
 
 # Manually with vtysh
 Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-40/Layer-3/Open-Shortest-Path-First-OSPF/
+## add interface to ospf (activate ospf on interface)
 - `sudo vtysh`
-- `configure terminal' 
+- open terminal `configure terminal` 
+- choose the process that is to be configured: `router ospf`
+- go to the interface: `interface tun0`
+- add interface to area: `ip ospf area 0.0.0.0`
+
+## tell ospf which routes are to be distributed
+- `sudo vtysh`
+- `congfigure terminal`
 - `router ospf`
-- `ìnterface tun0`
-- `ip ospf area 0.0.0.0`
+- `redistribute kernel
+- `redistribute static`
