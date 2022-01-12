@@ -128,3 +128,6 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
 # troubleshooting
 - check for hello packets sent/received on any interface: `sudo tcpdump -i any proto ospf` (Hello packets?)
 - check multicast group membership of interfaces: `netstat -g` (must be member of ospf-all.mcast.net)
+- turn up log info: `log <file name> debugging`
+
+ Packet from <ip>] received on link tun0 but no ospf_interface                      2022/01/12 19:28:29 OSPF: make_hello: options: 2, int: tun0:<another ip>                       
