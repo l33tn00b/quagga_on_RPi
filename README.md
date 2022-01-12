@@ -1,20 +1,24 @@
-Don't forget to adapt the cloud-based firewall at your server's hosting provider.
-
+Don't forget to adapt the cloud-based firewall at your server's hosting provider. 
+*bonk*
 
 # quagga_on_RPi
-Setting Up Quagga on a Raspberry Pi
+Setting Up Quagga on a Raspberry Pi for IPv4 routing.
 Documentation:
 - https://wiki.gentoo.org/wiki/Quagga (for gentoo but generally helpful)
-- https://www.nongnu.org/quagga/docs/quagga.html
+- https://www.nongnu.org/quagga/docs/quagga.html (Quagga doc)
 - https://wiki.debian.org/JonathanFerguson/Quagga
-- 
+
+This is for a Pi (or any other Debian based distro) attached via OpenVPN to a VPN server. OpenVPN setup is documented somewhere else.
+OpenVPN is used to have an encrypted tunnel from a local network to the central VPN server.
+Think of attaching a branch office to the main location. Now, we may also have multiple branch offices attached to that central main location. This will give us a classic star topology. All done using static routes (set by the OpenVPN server/client). Connectivity between the branch offices is established by going via the central node (main office).
+But what if the main office suffers a loss of connectivity? Wouldn't it be nice to have a backup connection between the branch offices? This is where we start using dynamic routing. So we establish additional OpenVPN tunnels between the branch offices. And need to use dynamic routing so we may detect a loss of connectivity to the main office and start using the backup routes. Or we may choose to route normal traffic between the branch offices directly (without having to go via the main office).
 
 # Install
 - `sudo apt-get install quagga
 - `sudo mkdir -p /var/log/quagga && sudo chown quagga:quagga /var/log/quagga`
 
 # Enable Kernel functionality required for Routing
-## Enable IPv4 and IPv6 Forwarding: 
+## Enable IPv4 (and IPv6) Forwarding: 
 - `echo "net.ipv4.forward=1" | sudo tee -a /etc/sysctl.conf`
 (- `sed 's/#net.ipv6.conf.all.forwarding=1/net.ipv6.conf.all.forwarding=1/g' /etc/sysctl.conf | sudo tee /etc/sysctl.conf`)
 (- `echo "net.ipv6.conf.default.forwarding=1" | sudo tee -a /etc/sysctl.conf`)
@@ -45,11 +49,13 @@ Documentation:
 !
 hostname <hostname>
 password <choose one>
+!enable password is for commands that may be used to change the config
 enable password <again, choose one>
 !
 interface eth0
-!
+!one tunnel to the main office
 interface tun0
+!
 ! log to dedicated log file
 log file /var/log/quagga/zebra.log informational  
 ! enable vty config mode
@@ -61,7 +67,42 @@ line vty
 # Set Up OSPFD
 - Edit config file: `sudo nano /etc/quagga/ospfd.conf`
 ```
+!
+hostname <to your liking>
+password <choose one>
+enable password <choose another one>
+log file /var/log/quagga/ospfd.log
+line vty
+
+router ospf
+ ospf router-id <e.g. ip>
+ !the RPI has multiple interfaces we don't want to run 
+ !the routing protocol on 
+ !we only use our vpn tunnel(s) for routing
+ passive-interface eth0
+ passive-interface wlan0
+ passive-interface lo
+ !the purpose of dynamic routing.
+ !let others know about the networks we're attached to
+ redistribute connected
+ !we'll be doing per-interface configuration
+ !instead of per-network configuration
+ interface ipsec1
+  description tunnel to vpn server
+  !make it belong to the backbone
+  ip ospf area 0.0.0.0
+  !it is a point-to-point connection (between us and
+  !the main office location VPN server)
+  ip ospf network point-to-point
+ interface tun0
+  ip ospf network point-to-point
+  ! make it belong to the backbone
+  ip ospf area 0.0.0.0
 ```
+
+# Activate
+- `sudo systemctl restart zebra`
+- `sudo systemctl restart ospfd`
 
 # Manually with vtysh
 Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-40/Layer-3/Open-Shortest-Path-First-OSPF/
