@@ -147,4 +147,4 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
   - Did it subscribe to the multicast group? (ospf-all.mcast.net)
   - Does it receive the packets (strace -p <pid of ospfd> 2>&1 | grep msg)
   - the process doesn't receive the hello packets but they show up in the tcpdump and it is subscribed to the multicast group? DID YOU OPEN THE FIREWALL, Idiot? (yes, that's me..) Check the firewall log... `ufw allow in to 224.0.0.0/24 `
-- `Packet <our up> [Hello:RECV]: NetworkMask mismatch on eth0:<our interface> (configured prefix length is 25, but hello packet indicates 0).`
+- `Packet <another router's ip> [Hello:RECV]: NetworkMask mismatch on eth0:<our interface's ip> (configured prefix length is 25, but hello packet indicates 0).`
