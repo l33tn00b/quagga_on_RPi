@@ -130,6 +130,25 @@ Thank you, NVIDIA: https://docs.nvidia.com/networking-ethernet-software/cumulus-
 - `redistribute kernel
 - `redistribute static`
 
+## exclude routes from distribution (e.g. when having a public internet address on eth0)
+- why? because it might be distributed via other interfaces
+- thus causing confusion
+- we only want a single route (via the public ip)
+- if that one is unavailable, well so be it.
+- put an access list in your ospfd.conf
+  ```
+  ! make sure, the access list is _not_ in the router ospf part
+  ! watch the level of indentation!!!
+  access-list noeth0 deny 157.90.112.171/32
+  access-list noeth0 permit any
+  ```
+- reference that access list _IN the OSPF ROUTER PART_!
+  ```
+  distribute-list noeth0 out kernel
+  distribute-list noeth0 out static
+  distribute-list noeth0 out connected
+  ```
+
 # troubleshooting
 - check for hello packets sent/received on any interface: `sudo tcpdump -i any proto ospf` (Hello packets?)
 - check multicast group membership of interfaces: `netstat -g` (must be member of ospf-all.mcast.net)
